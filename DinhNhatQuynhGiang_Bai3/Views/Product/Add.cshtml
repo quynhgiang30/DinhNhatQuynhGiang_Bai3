@@ -1,11 +1,8 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
 @model DinhNhatQuynhGiang_Bai3.Models.Product
 
 <h2>Add Product</h2>
 
-<form asp-action="Add" enctype="multipart/form-data">
+<form asp-action="Add" method="post" enctype="multipart/form-data">
     <div class="form-group">
         <label asp-for="Name"></label>
         <input asp-for="Name" class="form-control" />
@@ -27,8 +24,8 @@
         <span asp-validation-for="CategoryId" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="ImageUrl">Product Image</label>
-        <input type="file" asp-for="ImageUrl" class="form-control" />
+        <label>Product Image</label>
+        <input type="file" name="imageFile" class="form-control" />
         <span asp-validation-for="ImageUrl" class="text-danger"></span>
     </div>
     <button type="submit" class="btn btn-primary">Add</button>

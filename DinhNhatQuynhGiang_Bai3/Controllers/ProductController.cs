@@ -74,7 +74,6 @@ namespace DinhNhatQuynhGiang_Bai3.Controllers
             return View(product);
         }
         [HttpPost]
-        [HttpPost]
         public async Task<IActionResult> Update(int id, Product product)
         {
             if (id != product.Id)
@@ -107,6 +106,16 @@ namespace DinhNhatQuynhGiang_Bai3.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _productRepository.DeleteAsync(id);
+                Console.WriteLine("Product deleted successfully");
+
+                TempData["SuccessMessage"] = "Product deleted successfully!";
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deleting product: {ex.Message}");
+                TempData["ErrorMessage"] = $"Error deleting product: {ex.Message}";
+            }
+
             return RedirectToAction(nameof(Index));
         }
     }
