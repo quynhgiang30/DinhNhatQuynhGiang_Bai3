@@ -9,48 +9,50 @@ namespace DinhNhatQuynhGiang_Bai3.Controllers
     {
         private readonly IProductRepository _productRepository;
         private readonly ICategoryRepository _categoryRepository;
-        public ProductController(IProductRepository productRepository,
-        ICategoryRepository categoryRepository)
+
+        public ProductController(IProductRepository productRepository, ICategoryRepository categoryRepository)
         {
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
         }
-        
+
+        // Hiển thị danh sách sản phẩm
         public async Task<IActionResult> Index()
         {
             var products = await _productRepository.GetAllAsync();
             return View(products);
         }
+
+
+
+
+
+        // Hiển thị form thêm sản phẩm
         public async Task<IActionResult> Add()
         {
             var categories = await _categoryRepository.GetAllAsync();
             ViewBag.Categories = new SelectList(categories, "Id", "Name");
             return View();
         }
+
+        // Xử lý thêm sản phẩm
         [HttpPost]
-        public async Task<IActionResult> Add(Product product, IFormFile imageFile)
+        public async Task<IActionResult> Add(Product product)
         {
             if (ModelState.IsValid)
             {
-                // Lưu hình ảnh nếu có
-                if (imageFile != null && imageFile.Length > 0)
-                {
-                    var filePath = Path.Combine("wwwroot/images", imageFile.FileName);
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await imageFile.CopyToAsync(stream);
-                    }
-                    product.ImageUrl = $"/images/{imageFile.FileName}"; // Cập nhật đường dẫn hình ảnh
-                }
-
                 await _productRepository.AddAsync(product);
                 return RedirectToAction(nameof(Index));
             }
 
+            // Nếu ModelState không hợp lệ, hiển thị lại form với dữ liệu đã nhập
             var categories = await _categoryRepository.GetAllAsync();
             ViewBag.Categories = new SelectList(categories, "Id", "Name");
             return View(product);
         }
+
+
+        // Hiển thị chi tiết sản phẩm
         public async Task<IActionResult> Display(int id)
         {
             var product = await _productRepository.GetByIdAsync(id);
@@ -61,6 +63,7 @@ namespace DinhNhatQuynhGiang_Bai3.Controllers
             return View(product);
         }
 
+        // Hiển thị form cập nhật sản phẩm
         public async Task<IActionResult> Update(int id)
         {
             var product = await _productRepository.GetByIdAsync(id);
@@ -68,11 +71,13 @@ namespace DinhNhatQuynhGiang_Bai3.Controllers
             {
                 return NotFound();
             }
+
             var categories = await _categoryRepository.GetAllAsync();
-            ViewBag.Categories = new SelectList(categories, "Id", "Name",
-            product.CategoryId);
+            ViewBag.Categories = new SelectList(categories, "Id", "Name", product.CategoryId);
             return View(product);
         }
+
+        // Xử lý cập nhật sản phẩm
         [HttpPost]
         public async Task<IActionResult> Update(int id, Product product)
         {
@@ -87,11 +92,13 @@ namespace DinhNhatQuynhGiang_Bai3.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // Nếu có lỗi, lấy lại danh sách danh mục
+            // Nếu ModelState không hợp lệ, hiển thị lại form với dữ liệu đã nhập
             var categories = await _categoryRepository.GetAllAsync();
             ViewBag.Categories = new SelectList(categories, "Id", "Name", product.CategoryId);
             return View(product);
         }
+
+        // Hiển thị form xác nhận xóa sản phẩm
         public async Task<IActionResult> Delete(int id)
         {
             var product = await _productRepository.GetByIdAsync(id);
@@ -101,23 +108,14 @@ namespace DinhNhatQuynhGiang_Bai3.Controllers
             }
             return View(product);
         }
-        [
-        HttpPost, ActionName("DeleteConfirmed")]
+
+        // Xử lý xóa sản phẩm
+        [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _productRepository.DeleteAsync(id);
-                Console.WriteLine("Product deleted successfully");
-
-                TempData["SuccessMessage"] = "Product deleted successfully!";
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error deleting product: {ex.Message}");
-                TempData["ErrorMessage"] = $"Error deleting product: {ex.Message}";
-            }
-
             return RedirectToAction(nameof(Index));
         }
     }
-}
 
+}
