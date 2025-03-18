@@ -1,13 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace DinhNhatQuynhGiang_Bai3.Models
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using DinhNhatQuynhGiang_Bai3.Models;
+public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 {
-    public class ApplicationDbContext : DbContext
-    {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext>options) : base(options)
-{ }
-        public DbSet<Product> Products { get; set; }
-        public DbSet<Category> Categories { get; set; }
-        public DbSet<ProductImage> ProductImages { get; set; }
-    }
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+    { }
+    public DbSet<Product> Products { get; set; }
+    public DbSet<Category> Categories { get; set; }
+    // Các DbSet khác nếu cần
 }
